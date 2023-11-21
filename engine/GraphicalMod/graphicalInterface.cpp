@@ -28,8 +28,8 @@
 
     void GraphicalInterface::shutdownGraphicalAPI() {
 
-        vulkanInterface.closeInstance();
         vulkanInterface.closeLogicalDevice();
+        vulkanInterface.closeInstance();
 
     };
 

@@ -1,6 +1,5 @@
 #include "vulkanRequires.hpp"
 
-#include "./logicalDevices/logicalDevices.hpp"
 #include "./physicalDevices/physicalDevices.hpp"
 #include "./queues/queues.hpp"
 #include "./swapChains/swapChains.hpp"
@@ -23,5 +22,6 @@ class VulkanInterface {
         VkInstance instance;
         VkPhysicalDevice physicalDevice;
         VkDevice device;
+        VkQueue graphicsQueue;
 
 };
