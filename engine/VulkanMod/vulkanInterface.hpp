@@ -26,6 +26,7 @@ class VulkanInterface {
         VkPhysicalDevice physicalDevice;
         VkDevice device;
         VkQueue graphicsQueue;
+        VkQueue presentQueue;
         VkSurfaceKHR surface;
 
 };

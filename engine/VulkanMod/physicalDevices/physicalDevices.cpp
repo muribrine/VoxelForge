@@ -17,14 +17,14 @@ std::vector<VkPhysicalDevice> getPhysicalDevices(VkInstance instance) {
 
 };
 
-bool deviceIsSuitable(VkPhysicalDevice device) {
+bool deviceIsSuitable(VkPhysicalDevice device, VkSurfaceKHR surface) {
 
     VkPhysicalDeviceProperties deviceProperties;
     VkPhysicalDeviceFeatures deviceFeatures;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
-    QueueFamilyIndices indices = findQueueFamilies(device);
+    QueueFamilyIndices indices = findQueueFamilies(device, surface);
     return indices.isComplete();
 
 };
