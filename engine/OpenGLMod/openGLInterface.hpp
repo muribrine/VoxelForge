@@ -1,0 +1,7 @@
+class OpenGLInterface {
+
+    public:
+
+    private:
+
+};
