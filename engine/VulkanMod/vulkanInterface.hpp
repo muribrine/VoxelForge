@@ -10,10 +10,13 @@ class VulkanInterface {
 
     public:
 
+        GLFWwindow* createWindow(const char* windowTitle, uint32_t windowWidth, uint32_t windowHeight);
         void createInstance(const char* title);
+        void createWindowSurface(GLFWwindow* window);
         void pickPhysicalDevice();
         void createLogicalDevice();
 
+        void vkDestroySurface();
         void closeInstance();
         void closeLogicalDevice();
 
@@ -23,5 +26,6 @@ class VulkanInterface {
         VkPhysicalDevice physicalDevice;
         VkDevice device;
         VkQueue graphicsQueue;
+        VkSurfaceKHR surface;
 
 };

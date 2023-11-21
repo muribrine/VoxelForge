@@ -4,16 +4,14 @@
 
     void GraphicalInterface::initWindow() {
 
-        glfwInit();
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
+        window = vulkanInterface.createWindow(windowTitle, windowWidth, windowHeight);
 
     };
 
     void GraphicalInterface::initGraphicalAPI() {
 
         vulkanInterface.createInstance(windowTitle);
+        vulkanInterface.createWindowSurface(window);
         vulkanInterface.pickPhysicalDevice();
         vulkanInterface.createLogicalDevice();
 
@@ -28,6 +26,7 @@
 
     void GraphicalInterface::shutdownGraphicalAPI() {
 
+        vulkanInterface.vkDestroySurface();
         vulkanInterface.closeLogicalDevice();
         vulkanInterface.closeInstance();
 

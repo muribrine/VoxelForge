@@ -1,5 +1,14 @@
 #include "vulkanInterface.hpp"
 
+GLFWwindow* VulkanInterface::createWindow(const char* windowTitle, uint32_t windowWidth, uint32_t windowHeight) {
+
+    glfwInit();
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    return glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
+
+};
+
 void VulkanInterface::createInstance(const char* title) {
 
     VkApplicationInfo appInfo = makeInstanceAppInfo(title);
@@ -10,6 +19,14 @@ void VulkanInterface::createInstance(const char* title) {
     };
 
 };
+
+void VulkanInterface::createWindowSurface(GLFWwindow* window) {
+
+    if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create window surface!");
+    }
+    
+}
 
 void VulkanInterface::pickPhysicalDevice() {
 
@@ -60,6 +77,12 @@ void VulkanInterface::createLogicalDevice() {
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 
 }
+
+void VulkanInterface::vkDestroySurface() {
+
+    vkDestroySurfaceKHR(instance, surface, nullptr);
+
+};
 
 void VulkanInterface::closeInstance() {
 
