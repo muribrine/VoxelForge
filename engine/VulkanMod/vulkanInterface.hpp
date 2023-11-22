@@ -15,6 +15,7 @@ class VulkanInterface {
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createSwapChain(GLFWwindow* window);
+        void createImageViews();
 
         void cleanUpVkResources();
 
@@ -34,5 +35,7 @@ class VulkanInterface {
         std::vector<VkImage> swapChainImages;
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
+
+        std::vector<VkImageView> swapChainImageViews;
 
 };

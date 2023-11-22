@@ -15,6 +15,7 @@
         vulkanInterface.pickPhysicalDevice();
         vulkanInterface.createLogicalDevice();
         vulkanInterface.createSwapChain(window);
+        vulkanInterface.createImageViews();
 
     };
 
