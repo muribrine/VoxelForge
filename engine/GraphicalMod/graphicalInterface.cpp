@@ -14,6 +14,7 @@
         vulkanInterface.createWindowSurface(window);
         vulkanInterface.pickPhysicalDevice();
         vulkanInterface.createLogicalDevice();
+        vulkanInterface.createSwapChain(window);
 
     };
 
@@ -26,9 +27,10 @@
 
     void GraphicalInterface::shutdownGraphicalAPI() {
 
-        vulkanInterface.vkDestroySurface();
-        vulkanInterface.closeLogicalDevice();
-        vulkanInterface.closeInstance();
+        vulkanInterface.DestroySwapChain();
+        vulkanInterface.DestroyLogicalDevice();
+        vulkanInterface.DestroySurface();
+        vulkanInterface.DestroyInstance();
 
     };
 

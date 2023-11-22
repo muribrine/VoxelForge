@@ -10,3 +10,6 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <algorithm>
+#include <limits>
+#include <cstdint>

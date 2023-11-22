@@ -15,18 +15,28 @@ class VulkanInterface {
         void createWindowSurface(GLFWwindow* window);
         void pickPhysicalDevice();
         void createLogicalDevice();
+        void createSwapChain(GLFWwindow* window);
 
-        void vkDestroySurface();
-        void closeInstance();
-        void closeLogicalDevice();
+        void DestroySurface();
+        void DestroyInstance();
+        void DestroyLogicalDevice();
+        void DestroySwapChain();
 
     private:
 
         VkInstance instance;
+
         VkPhysicalDevice physicalDevice;
         VkDevice device;
+
         VkQueue graphicsQueue;
         VkQueue presentQueue;
+        
         VkSurfaceKHR surface;
+
+        VkSwapchainKHR swapChain;
+        std::vector<VkImage> swapChainImages;
+        VkFormat swapChainImageFormat;
+        VkExtent2D swapChainExtent;
 
 };
