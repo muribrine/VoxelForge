@@ -1,5 +1,6 @@
 #include "physicalDevices.hpp"
 #include "../queues/queues.hpp"
+#include "../swapChains/swapChains.hpp"
 
 std::vector<VkPhysicalDevice> getPhysicalDevices(VkInstance instance) {
 
@@ -19,13 +20,41 @@ std::vector<VkPhysicalDevice> getPhysicalDevices(VkInstance instance) {
 
 bool deviceIsSuitable(VkPhysicalDevice device, VkSurfaceKHR surface) {
 
+    /*
     VkPhysicalDeviceProperties deviceProperties;
     VkPhysicalDeviceFeatures deviceFeatures;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+    */
+
+    bool extensionsSupported = checkDeviceExtensionSupport(device);
+    bool swapChainAdequate = false;
 
     QueueFamilyIndices indices = findQueueFamilies(device, surface);
-    return indices.isComplete();
+    if (extensionsSupported) {
+        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device, surface);
+        swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+    };
+
+    return indices.isComplete() && extensionsSupported && swapChainAdequate;
+
+};
+
+bool checkDeviceExtensionSupport(VkPhysicalDevice device) {
+
+    uint32_t extensionCount;
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+    std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+
+    for (const auto& extension : availableExtensions) {
+        requiredExtensions.erase(extension.extensionName);
+    }
+
+    return requiredExtensions.empty();
 
 };
 
