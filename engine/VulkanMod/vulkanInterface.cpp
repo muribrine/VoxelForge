@@ -157,26 +157,11 @@ void VulkanInterface::createSwapChain(GLFWwindow* window) {
 
 };
 
-void VulkanInterface::DestroySurface() {
+void VulkanInterface::cleanUpVkResources() {
 
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
+    vkDestroyDevice(device, nullptr);
     vkDestroySurfaceKHR(instance, surface, nullptr);
-
-};
-
-void VulkanInterface::DestroyInstance() {
-
     vkDestroyInstance(instance, nullptr);
 
 };
-
-void VulkanInterface::DestroyLogicalDevice() {
-
-    vkDestroyDevice(device, nullptr);
-
-}
-
-void VulkanInterface::DestroySwapChain() {
-
-    vkDestroySwapchainKHR(device, swapChain, nullptr);
-
-}

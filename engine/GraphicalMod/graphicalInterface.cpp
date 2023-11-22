@@ -27,10 +27,7 @@
 
     void GraphicalInterface::shutdownGraphicalAPI() {
 
-        vulkanInterface.DestroySwapChain();
-        vulkanInterface.DestroyLogicalDevice();
-        vulkanInterface.DestroySurface();
-        vulkanInterface.DestroyInstance();
+        vulkanInterface.cleanUpVkResources();
 
     };
 

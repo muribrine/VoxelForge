@@ -4,7 +4,6 @@
 #include "./queues/queues.hpp"
 #include "./swapChains/swapChains.hpp"
 #include "./vkInstance/vkInstance.hpp"
-#include "./windowing/windowing.hpp"
 
 class VulkanInterface {
 
@@ -17,10 +16,7 @@ class VulkanInterface {
         void createLogicalDevice();
         void createSwapChain(GLFWwindow* window);
 
-        void DestroySurface();
-        void DestroyInstance();
-        void DestroyLogicalDevice();
-        void DestroySwapChain();
+        void cleanUpVkResources();
 
     private:
 
