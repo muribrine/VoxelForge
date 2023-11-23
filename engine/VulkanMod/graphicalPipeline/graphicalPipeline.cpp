@@ -19,3 +19,22 @@ VkShaderModule createShaderModule(const std::vector<char>& code, VkDevice device
     return shaderModule;
 
 };
+
+VkPipelineShaderStageCreateInfo createShaderStageCreateInfo(VkShaderModule module, std::string type) {
+
+    VkPipelineShaderStageCreateInfo shaderStageInfo{};
+
+    shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    shaderStageInfo.module = module;
+    shaderStageInfo.pName = "main";
+
+    if ( type == std::string("vert") ) {
+        shaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    }
+    if ( type == std::string("frag") ) {
+        shaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    }
+
+    return shaderStageInfo;
+
+};
