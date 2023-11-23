@@ -4,6 +4,8 @@
 #include "./queues/queues.hpp"
 #include "./swapChains/swapChains.hpp"
 #include "./vkInstance/vkInstance.hpp"
+#include "./graphicalPipeline/graphicalPipeline.hpp"
+#include "./utils/readFile.hpp"
 
 class VulkanInterface {
 
@@ -16,6 +18,7 @@ class VulkanInterface {
         void createLogicalDevice();
         void createSwapChain(GLFWwindow* window);
         void createImageViews();
+        void createGraphicsPipeline();
 
         void cleanUpVkResources();
 

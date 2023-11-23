@@ -11,11 +11,16 @@
     void GraphicalInterface::initGraphicalAPI() {
 
         vulkanInterface.createInstance(windowTitle);
+
         vulkanInterface.createWindowSurface(window);
+
         vulkanInterface.pickPhysicalDevice();
         vulkanInterface.createLogicalDevice();
+
         vulkanInterface.createSwapChain(window);
         vulkanInterface.createImageViews();
+
+        vulkanInterface.createGraphicsPipeline();
 
     };
 

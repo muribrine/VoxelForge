@@ -1,1 +1,3 @@
 /bin/
+/engine/VulkanMod/shaders/frag.spv
+/engine/VulkanMod/shaders/vert.spv
