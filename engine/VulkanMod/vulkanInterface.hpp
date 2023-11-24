@@ -20,6 +20,7 @@ class VulkanInterface {
         void createImageViews();
         void createRenderPass();
         void createGraphicsPipeline();
+        void createFramebuffers();
 
         void cleanUpVkResources();
 
@@ -41,6 +42,7 @@ class VulkanInterface {
         VkExtent2D swapChainExtent;
 
         std::vector<VkImageView> swapChainImageViews;
+        std::vector<VkFramebuffer> swapChainFramebuffers;
 
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;

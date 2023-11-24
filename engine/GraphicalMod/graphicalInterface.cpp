@@ -22,6 +22,7 @@
 
         vulkanInterface.createRenderPass();
         vulkanInterface.createGraphicsPipeline();
+        vulkanInterface.createFramebuffers();
 
     };
 
