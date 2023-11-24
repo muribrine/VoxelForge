@@ -20,6 +20,7 @@
         vulkanInterface.createSwapChain(window);
         vulkanInterface.createImageViews();
 
+        vulkanInterface.createRenderPass();
         vulkanInterface.createGraphicsPipeline();
 
     };

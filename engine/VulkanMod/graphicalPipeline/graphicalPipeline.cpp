@@ -39,43 +39,43 @@ VkPipelineShaderStageCreateInfo createShaderStageCreateInfo(VkShaderModule modul
 
 };
 
-VkPipelineVertexInputStateCreateInfo makeVertexInputCreateInfo() {
+VkPipelineVertexInputStateCreateInfo* makeVertexInputCreateInfo() {
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = 0;
     vertexInputInfo.vertexAttributeDescriptionCount = 0;
 
-    return vertexInputInfo;
+    return &vertexInputInfo;
 
 };
 
 
-VkPipelineInputAssemblyStateCreateInfo makeInputAssemblyCreateInfo() {
+VkPipelineInputAssemblyStateCreateInfo* makeInputAssemblyCreateInfo() {
 
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
     inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     inputAssembly.primitiveRestartEnable = VK_FALSE;
 
-    return inputAssembly;
+    return &inputAssembly;
 
 };
 
 
-VkPipelineViewportStateCreateInfo makeViewportStateCreateInfo() {
+VkPipelineViewportStateCreateInfo* makeViewportStateCreateInfo() {
 
     VkPipelineViewportStateCreateInfo viewportState{};
     viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     viewportState.viewportCount = 1;
     viewportState.scissorCount = 1;
 
-    return viewportState;
+    return &viewportState;
 
 };
 
 
-VkPipelineRasterizationStateCreateInfo makeRasterizerCreateInfo() {
+VkPipelineRasterizationStateCreateInfo* makeRasterizerCreateInfo() {
 
     VkPipelineRasterizationStateCreateInfo rasterizer{};
     rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -87,24 +87,24 @@ VkPipelineRasterizationStateCreateInfo makeRasterizerCreateInfo() {
     rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
     rasterizer.depthBiasEnable = VK_FALSE;
 
-    return rasterizer;
+    return &rasterizer;
 
 };
 
 
-VkPipelineMultisampleStateCreateInfo makeMultisamplingCreateInfo() {
+VkPipelineMultisampleStateCreateInfo* makeMultisamplingCreateInfo() {
 
     VkPipelineMultisampleStateCreateInfo multisampling{};
     multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     multisampling.sampleShadingEnable = VK_FALSE;
     multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-    return multisampling;
+    return &multisampling;
 
 };
 
 
-VkPipelineDynamicStateCreateInfo makeDynamicStateCreateInfo() {
+VkPipelineDynamicStateCreateInfo* makeDynamicStateCreateInfo() {
 
     std::vector<VkDynamicState> dynamicStates = {
         VK_DYNAMIC_STATE_VIEWPORT,
@@ -116,23 +116,6 @@ VkPipelineDynamicStateCreateInfo makeDynamicStateCreateInfo() {
     dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
     dynamicState.pDynamicStates = dynamicStates.data();
 
-    return dynamicState;
-
-};
-
-VkPipelineColorBlendStateCreateInfo makeColorBlendStateCreateInfo(VkPipelineColorBlendAttachmentState *colorBlendAttachment) {
-
-    VkPipelineColorBlendStateCreateInfo colorBlending{};
-    colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-    colorBlending.logicOpEnable = VK_FALSE;
-    colorBlending.logicOp = VK_LOGIC_OP_COPY;
-    colorBlending.attachmentCount = 1;
-    colorBlending.pAttachments = colorBlendAttachment;
-    colorBlending.blendConstants[0] = 0.0f;
-    colorBlending.blendConstants[1] = 0.0f;
-    colorBlending.blendConstants[2] = 0.0f;
-    colorBlending.blendConstants[3] = 0.0f;
-
-    return colorBlending;
+    return &dynamicState;
 
 };

@@ -18,6 +18,7 @@ class VulkanInterface {
         void createLogicalDevice();
         void createSwapChain(GLFWwindow* window);
         void createImageViews();
+        void createRenderPass();
         void createGraphicsPipeline();
 
         void cleanUpVkResources();
@@ -42,5 +43,7 @@ class VulkanInterface {
         std::vector<VkImageView> swapChainImageViews;
 
         VkPipelineLayout pipelineLayout;
+        VkPipeline graphicsPipeline;
+        VkRenderPass renderPass;
 
 };
