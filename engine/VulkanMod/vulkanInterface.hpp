@@ -41,4 +41,6 @@ class VulkanInterface {
 
         std::vector<VkImageView> swapChainImageViews;
 
+        VkPipelineLayout pipelineLayout;
+
 };

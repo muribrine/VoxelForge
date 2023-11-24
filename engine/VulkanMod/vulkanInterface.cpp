@@ -164,9 +164,33 @@ void VulkanInterface::createGraphicsPipeline() {
 
     VkPipelineShaderStageCreateInfo vertShaderStageInfo = createShaderStageCreateInfo(vertShaderModule, std::string("vert"));
     VkPipelineShaderStageCreateInfo fragShaderStageInfo = createShaderStageCreateInfo(fragShaderModule, std::string("frag"));
-
-
     VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+
+
+    VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo = makeVertexInputCreateInfo();
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyCreateInfo = makeInputAssemblyCreateInfo();
+    VkPipelineViewportStateCreateInfo viewportStateCreateInfo = makeViewportStateCreateInfo();
+    VkPipelineRasterizationStateCreateInfo rasterizerCreateInfo = makeRasterizerCreateInfo();
+    VkPipelineMultisampleStateCreateInfo multisamplingCreateInfo = makeMultisamplingCreateInfo();
+    VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = makeDynamicStateCreateInfo();
+
+    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    colorBlendAttachment.blendEnable = VK_FALSE;
+
+    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = makeColorBlendStateCreateInfo(&colorBlendAttachment);
+
+
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipelineLayoutInfo.setLayoutCount = 0;
+    pipelineLayoutInfo.pushConstantRangeCount = 0;
+
+    if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+
+        throw std::runtime_error("Failed to create pipeline layout!");
+
+    };
 
 
     vkDestroyShaderModule(device, fragShaderModule, nullptr);
@@ -176,6 +200,8 @@ void VulkanInterface::createGraphicsPipeline() {
 
 
 void VulkanInterface::cleanUpVkResources() {
+
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 
     for (auto imageView : swapChainImageViews) {
         vkDestroyImageView(device, imageView, nullptr);
