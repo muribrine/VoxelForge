@@ -17,3 +17,14 @@ Just use these define statements inside of "graphicalInterface.hpp", on the Grap
 #define GRAPHICAL_API_IS_VULKAN 1
 #define GRAPHICAL_API_iS_OPENGL 0
 ```
+
+## Compiling Shaders ( Vulkan )
+
+All shaders are found within the 'shaders' folder along with the compilation script.
+First, install the Vulkan SDK ( may have to modify the script to fit your SDK version ).
+After, run:
+```console
+cd shaders
+chmod +x compile.sh
+,/compile.sh
+```
