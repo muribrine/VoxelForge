@@ -21,6 +21,10 @@ class VulkanInterface {
         void createRenderPass();
         void createGraphicsPipeline();
         void createFramebuffers();
+        void createCommandPool();
+        void createCommandBuffer();
+
+        void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
         void cleanUpVkResources();
 
@@ -47,5 +51,8 @@ class VulkanInterface {
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
         VkRenderPass renderPass;
+
+        VkCommandPool commandPool;
+        VkCommandBuffer commandBuffer;
 
 };

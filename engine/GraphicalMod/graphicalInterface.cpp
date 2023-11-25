@@ -24,6 +24,9 @@
         vulkanInterface.createGraphicsPipeline();
         vulkanInterface.createFramebuffers();
 
+        vulkanInterface.createCommandPool();
+        vulkanInterface.createCommandBuffer();
+
     };
 
     void GraphicalInterface::closeWindow() {
