@@ -39,7 +39,7 @@ VkPipelineShaderStageCreateInfo createShaderStageCreateInfo(VkShaderModule modul
 
 };
 
-VkPipelineVertexInputStateCreateInfo* makeVertexInputCreateInfo() {
+/*VkPipelineVertexInputStateCreateInfo* makeVertexInputCreateInfo() {
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -118,4 +118,4 @@ VkPipelineDynamicStateCreateInfo* makeDynamicStateCreateInfo() {
 
     return &dynamicState;
 
-};
+};*/

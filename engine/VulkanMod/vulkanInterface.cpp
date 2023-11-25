@@ -154,6 +154,16 @@ void VulkanInterface::createImageViews() {
 
 void VulkanInterface::createRenderPass() {
 
+    VkSubpassDependency dependency{};
+
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass = 0;
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+
     VkAttachmentDescription colorAttachment{};
 
     colorAttachment.format = swapChainImageFormat;
@@ -183,6 +193,8 @@ void VulkanInterface::createRenderPass() {
     renderPassInfo.pAttachments = &colorAttachment;
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
+    renderPassInfo.dependencyCount = 1;
+    renderPassInfo.pDependencies = &dependency;
 
     if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
         
@@ -217,12 +229,61 @@ void VulkanInterface::createGraphicsPipeline() {
 
     };
 
-    VkPipelineVertexInputStateCreateInfo *vertexInputInfo = makeVertexInputCreateInfo();
-    VkPipelineInputAssemblyStateCreateInfo *inputAssembly = makeInputAssemblyCreateInfo();
-    VkPipelineViewportStateCreateInfo *viewportState = makeViewportStateCreateInfo();
-    VkPipelineRasterizationStateCreateInfo *rasterizer = makeRasterizerCreateInfo();
-    VkPipelineMultisampleStateCreateInfo *multisampling = makeMultisamplingCreateInfo();
-    VkPipelineDynamicStateCreateInfo *dynamicState = makeDynamicStateCreateInfo();
+    //VkPipelineVertexInputStateCreateInfo *vertexInputInfo = makeVertexInputCreateInfo();
+    //VkPipelineInputAssemblyStateCreateInfo *inputAssembly = makeInputAssemblyCreateInfo();
+    //VkPipelineViewportStateCreateInfo *viewportState = makeViewportStateCreateInfo();
+    //VkPipelineRasterizationStateCreateInfo *rasterizer = makeRasterizerCreateInfo();
+    //VkPipelineMultisampleStateCreateInfo *multisampling = makeMultisamplingCreateInfo();
+    //VkPipelineDynamicStateCreateInfo *dynamicState = makeDynamicStateCreateInfo();
+
+
+
+    VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInputInfo.vertexBindingDescriptionCount = 0;
+    vertexInputInfo.vertexAttributeDescriptionCount = 0;
+
+
+    VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+    inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+
+    VkPipelineViewportStateCreateInfo viewportState{};
+    viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportState.viewportCount = 1;
+    viewportState.scissorCount = 1;
+
+
+    VkPipelineRasterizationStateCreateInfo rasterizer{};
+    rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterizer.depthClampEnable = VK_FALSE;
+    rasterizer.rasterizerDiscardEnable = VK_FALSE;
+    rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+    rasterizer.lineWidth = 1.0f;
+    rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+    rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    rasterizer.depthBiasEnable = VK_FALSE;
+
+
+    VkPipelineMultisampleStateCreateInfo multisampling{};
+    multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multisampling.sampleShadingEnable = VK_FALSE;
+    multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+
+    std::vector<VkDynamicState> dynamicStates = {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR
+    };
+
+    VkPipelineDynamicStateCreateInfo dynamicState{};
+    dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+    dynamicState.pDynamicStates = dynamicStates.data();
+
+
 
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -242,13 +303,13 @@ void VulkanInterface::createGraphicsPipeline() {
     pipelineInfo.stageCount = 2;
 
     pipelineInfo.pStages = shaderStages;
-    pipelineInfo.pVertexInputState = vertexInputInfo;
-    pipelineInfo.pInputAssemblyState = inputAssembly;
-    pipelineInfo.pViewportState = viewportState;
-    pipelineInfo.pRasterizationState = rasterizer;
-    pipelineInfo.pMultisampleState = multisampling;
+    pipelineInfo.pVertexInputState = &vertexInputInfo;
+    pipelineInfo.pInputAssemblyState = &inputAssembly;
+    pipelineInfo.pViewportState = &viewportState;
+    pipelineInfo.pRasterizationState = &rasterizer;
+    pipelineInfo.pMultisampleState = &multisampling;
     pipelineInfo.pColorBlendState = &colorBlending;
-    pipelineInfo.pDynamicState = dynamicState;
+    pipelineInfo.pDynamicState = &dynamicState;
     pipelineInfo.layout = pipelineLayout;
     pipelineInfo.renderPass = renderPass;
 
@@ -358,17 +419,14 @@ void VulkanInterface::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_
     renderPassInfo.pClearValues = &clearColor;
 
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
     VkViewport viewport{};
 
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
+    viewport.x = 0.0f; viewport.y = 0.0f;
     viewport.width = static_cast<float>(swapChainExtent.width);
     viewport.height = static_cast<float>(swapChainExtent.height);
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
+    viewport.minDepth = 0.0f; viewport.maxDepth = 1.0f;
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
     VkRect2D scissor{};
@@ -390,7 +448,32 @@ void VulkanInterface::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_
 };
 
 
+void VulkanInterface::createSyncObjects() {
+
+    VkSemaphoreCreateInfo semaphoreInfo{};
+    VkFenceCreateInfo fenceInfo{};
+
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+    if (
+    vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+    vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS ||
+    vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS) {
+    
+        throw std::runtime_error("Failed to create semaphores / fences!");
+
+    };
+
+};
+
+
 void VulkanInterface::cleanUpVkResources() {
+
+    vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+    vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
+    vkDestroyFence(device, inFlightFence, nullptr);
 
     vkDestroyCommandPool(device, commandPool, nullptr);
 

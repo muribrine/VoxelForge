@@ -23,12 +23,10 @@ class VulkanInterface {
         void createFramebuffers();
         void createCommandPool();
         void createCommandBuffer();
-
         void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+        void createSyncObjects();
 
         void cleanUpVkResources();
-
-    private:
 
         VkInstance instance;
 
@@ -54,5 +52,9 @@ class VulkanInterface {
 
         VkCommandPool commandPool;
         VkCommandBuffer commandBuffer;
+
+        VkSemaphore imageAvailableSemaphore;
+        VkSemaphore renderFinishedSemaphore;
+        VkFence inFlightFence;
 
 };

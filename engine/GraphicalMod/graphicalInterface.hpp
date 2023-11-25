@@ -22,6 +22,9 @@
             void initWindow();
             void initGraphicalAPI();
 
+            void drawFrame();
+            void waitDeviceToFinish();
+
             void closeWindow();
             void shutdownGraphicalAPI();
 

@@ -14,7 +14,10 @@ void VoxelForge::mainLoop() {
 
     while (!glfwWindowShouldClose(graphicalInterface.window)) {
         glfwPollEvents();
+        graphicalInterface.drawFrame();
     }
+
+    graphicalInterface.waitDeviceToFinish();
 
     shutdown();
 
