@@ -22,7 +22,7 @@ class VulkanInterface {
         void createGraphicsPipeline();
         void createFramebuffers();
         void createCommandPool();
-        void createCommandBuffer();
+        void createCommandBuffers();
         void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         void createSyncObjects();
 
@@ -51,10 +51,12 @@ class VulkanInterface {
         VkRenderPass renderPass;
 
         VkCommandPool commandPool;
-        VkCommandBuffer commandBuffer;
+        std::vector<VkCommandBuffer> commandBuffers;
 
-        VkSemaphore imageAvailableSemaphore;
-        VkSemaphore renderFinishedSemaphore;
-        VkFence inFlightFence;
+        std::vector<VkSemaphore> imageAvailableSemaphores;
+        std::vector<VkSemaphore> renderFinishedSemaphores;
+        std::vector<VkFence> inFlightFences;
+
+        size_t maxConcurrentFrames;
 
 };

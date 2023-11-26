@@ -207,8 +207,8 @@ void VulkanInterface::createRenderPass() {
 
 void VulkanInterface::createGraphicsPipeline() {
 
-    auto vertShaderCode = readFile("./shaders/helloTriangle2/vert.spv");
-    auto fragShaderCode = readFile("./shaders/helloTriangle2/frag.spv");
+    auto vertShaderCode = readFile("./shaders/helloTriangle/vert.spv");
+    auto fragShaderCode = readFile("./shaders/helloTriangle/frag.spv");
 
 
     VkShaderModule vertShaderModule = createShaderModule(vertShaderCode, device);
@@ -377,16 +377,18 @@ void VulkanInterface::createCommandPool() {
 };
 
 
-void VulkanInterface::createCommandBuffer() {
+void VulkanInterface::createCommandBuffers() {
+
+    commandBuffers.resize(maxConcurrentFrames);
 
     VkCommandBufferAllocateInfo allocInfo{};
 
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = commandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = 1;
+    allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
 
-    if (vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer) != VK_SUCCESS) {
+    if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
 
         throw std::runtime_error("Failed to allocate command buffers!");
 
@@ -450,6 +452,10 @@ void VulkanInterface::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_
 
 void VulkanInterface::createSyncObjects() {
 
+    imageAvailableSemaphores.resize(maxConcurrentFrames);
+    renderFinishedSemaphores.resize(maxConcurrentFrames);
+    inFlightFences.resize(maxConcurrentFrames);
+
     VkSemaphoreCreateInfo semaphoreInfo{};
     VkFenceCreateInfo fenceInfo{};
 
@@ -457,12 +463,16 @@ void VulkanInterface::createSyncObjects() {
     fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-    if (
-    vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
-    vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS ||
-    vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS) {
-    
-        throw std::runtime_error("Failed to create semaphores / fences!");
+    for (size_t i = 0; i < maxConcurrentFrames; i++) {
+        
+        if (
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+        vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+
+            throw std::runtime_error("Failed to create synchronization objects!");
+
+        };
 
     };
 
@@ -471,9 +481,13 @@ void VulkanInterface::createSyncObjects() {
 
 void VulkanInterface::cleanUpVkResources() {
 
-    vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
-    vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
-    vkDestroyFence(device, inFlightFence, nullptr);
+    for (size_t i = 0; i < maxConcurrentFrames; i++) {
+
+        vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
+        vkDestroyFence(device, inFlightFences[i], nullptr);
+
+    };
 
     vkDestroyCommandPool(device, commandPool, nullptr);
 

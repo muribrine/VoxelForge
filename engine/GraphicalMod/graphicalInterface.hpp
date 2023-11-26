@@ -32,6 +32,9 @@
 
             VulkanInterface vulkanInterface;
 
+            const size_t maxConcurrentFrames = 2;
+            uint32_t currentFrame = 0;
+
 };
 
 #endif
