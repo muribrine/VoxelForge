@@ -4,10 +4,21 @@ A 3d game engine / game framework written in C++ using the Vulkan API and OpenGL
 
 ## Building and running
 
+To just compile the game, run:
+
 ```console
-make all
-./bin/game
+chmod +x compileGame.sh
+./compileGame.sh
 ```
+
+To compile the shaders and the game, run:
+```console
+chmod +x ./shaders/compileShaders.sh
+chmod +x compileAll.sh
+./compileAll.sh
+```
+
+( Run "chmod" only on the first time. )
 
 ## Switching between Vulkan and OpenGL
 
@@ -22,9 +33,9 @@ Just use these define statements inside of "graphicalInterface.hpp", on the Grap
 
 All shaders are found within the 'shaders' folder along with the compilation script.
 First, install the Vulkan SDK ( may have to modify the script to fit your SDK version ).
-After, run:
+After that, run:
 ```console
 cd shaders
-chmod +x compile.sh
-,/compile.sh
+chmod +x compileShaders.sh
+./compileShaders.sh
 ```

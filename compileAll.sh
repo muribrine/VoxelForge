@@ -1,0 +1,1 @@
+./shaders/compile.sh && make all && ./bin/game
