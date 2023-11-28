@@ -14,12 +14,12 @@
 
         vulkanInterface.createInstance(windowTitle);
 
-        vulkanInterface.createWindowSurface(window);
+        vulkanInterface.createWindowSurface();
 
         vulkanInterface.pickPhysicalDevice();
         vulkanInterface.createLogicalDevice();
 
-        vulkanInterface.createSwapChain(window);
+        vulkanInterface.createSwapChain();
         vulkanInterface.createImageViews();
 
         vulkanInterface.createRenderPass();
@@ -36,10 +36,9 @@
     void GraphicalInterface::drawFrame() {
         
         vkWaitForFences(vulkanInterface.device, 1, &vulkanInterface.inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-        vkResetFences(vulkanInterface.device, 1, &vulkanInterface.inFlightFences[currentFrame]);
 
         uint32_t imageIndex;
-        vkAcquireNextImageKHR(
+        VkResult result = vkAcquireNextImageKHR(
             vulkanInterface.device,
             vulkanInterface.swapChain,
             UINT64_MAX,
@@ -47,6 +46,15 @@
             VK_NULL_HANDLE,
             &imageIndex
         );
+
+        if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+            vulkanInterface.recreateSwapChain();
+            return;
+        } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+            throw std::runtime_error("Failed to acquire swap chain image!");
+        };
+
+        vkResetFences(vulkanInterface.device, 1, &vulkanInterface.inFlightFences[currentFrame]);
 
         vkResetCommandBuffer(vulkanInterface.commandBuffers[currentFrame], 0);
         vulkanInterface.recordCommandBuffer(vulkanInterface.commandBuffers[currentFrame], imageIndex);
@@ -86,7 +94,14 @@
         presentInfo.pSwapchains = swapChains;
         presentInfo.pImageIndices = &imageIndex;
 
-        vkQueuePresentKHR(vulkanInterface.presentQueue, &presentInfo);
+        result = vkQueuePresentKHR(vulkanInterface.presentQueue, &presentInfo);
+
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+            vulkanInterface.framebufferResized_FLAG = false;
+            vulkanInterface.recreateSwapChain();
+        } else if (result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to present swap chain image!");
+        };
 
         currentFrame = (currentFrame + 1) % maxConcurrentFrames;
 

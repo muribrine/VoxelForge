@@ -1,14 +1,22 @@
 #include "vulkanInterface.hpp"
 
+static void framebufferResizeCallback(GLFWwindow* window, int _width, int _height) {
+
+    auto app = reinterpret_cast<VulkanInterface*>(glfwGetWindowUserPointer(window));
+    app->framebufferResized_FLAG = true;
+
+};
+
 GLFWwindow* VulkanInterface::createWindow(const char* windowTitle, uint32_t windowWidth, uint32_t windowHeight) {
 
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    return glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
+    window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+    return window;
 
 };
-
 
 void VulkanInterface::createInstance(const char* title) {
 
@@ -22,7 +30,7 @@ void VulkanInterface::createInstance(const char* title) {
 };
 
 
-void VulkanInterface::createWindowSurface(GLFWwindow* window) {
+void VulkanInterface::createWindowSurface() {
 
     if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create window surface!");
@@ -97,7 +105,7 @@ void VulkanInterface::createLogicalDevice() {
 };
 
 
-void VulkanInterface::createSwapChain(GLFWwindow* window) {
+void VulkanInterface::createSwapChain() {
 
     SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice, surface);
 
@@ -130,6 +138,43 @@ void VulkanInterface::createSwapChain(GLFWwindow* window) {
     vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
 
     swapChainImageFormat = surfaceFormat.format;
+
+};
+
+void VulkanInterface::cleanUpSwapChain() {
+
+    for (auto framebuffer : swapChainFramebuffers) {
+        vkDestroyFramebuffer(device, framebuffer, nullptr);
+    };
+
+    for (auto imageView : swapChainImageViews) {
+        vkDestroyImageView(device, imageView, nullptr);
+    };
+
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
+
+};
+
+void VulkanInterface::recreateSwapChain() {
+
+    int width = 0, height = 0;
+
+    glfwGetFramebufferSize(window, &width, &height);
+
+    while (width == 0 || height == 0) {
+        
+        glfwGetFramebufferSize(window, &width, &height);
+        glfwWaitEvents();
+
+    };
+
+    vkDeviceWaitIdle(device);
+
+    cleanUpSwapChain();
+
+    createSwapChain();
+    createImageViews();
+    createFramebuffers();
 
 };
 
@@ -481,6 +526,13 @@ void VulkanInterface::createSyncObjects() {
 
 void VulkanInterface::cleanUpVkResources() {
 
+    cleanUpSwapChain();
+
+    vkDestroyPipeline(device, graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+
+    vkDestroyRenderPass(device, renderPass, nullptr);
+
     for (size_t i = 0; i < maxConcurrentFrames; i++) {
 
         vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
@@ -490,24 +542,6 @@ void VulkanInterface::cleanUpVkResources() {
     };
 
     vkDestroyCommandPool(device, commandPool, nullptr);
-
-    for (auto framebuffer : swapChainFramebuffers) {
-
-        vkDestroyFramebuffer(device, framebuffer, nullptr);
-
-    }
-
-    vkDestroyPipeline(device, graphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-    vkDestroyRenderPass(device, renderPass, nullptr);
-
-    for (auto imageView : swapChainImageViews) {
-
-        vkDestroyImageView(device, imageView, nullptr);
-
-    };
-
-    vkDestroySwapchainKHR(device, swapChain, nullptr);
     vkDestroyDevice(device, nullptr);
     vkDestroySurfaceKHR(instance, surface, nullptr);
     vkDestroyInstance(instance, nullptr);

@@ -12,21 +12,30 @@ class VulkanInterface {
     public:
 
         GLFWwindow* createWindow(const char* windowTitle, uint32_t windowWidth, uint32_t windowHeight);
+        void createWindowSurface();
+
         void createInstance(const char* title);
-        void createWindowSurface(GLFWwindow* window);
+        
         void pickPhysicalDevice();
         void createLogicalDevice();
-        void createSwapChain(GLFWwindow* window);
+
+        void createSwapChain();
+        void cleanUpSwapChain();
+        void recreateSwapChain();
         void createImageViews();
+
         void createRenderPass();
         void createGraphicsPipeline();
         void createFramebuffers();
+
         void createCommandPool();
         void createCommandBuffers();
         void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         void createSyncObjects();
 
         void cleanUpVkResources();
+
+        GLFWwindow* window;
 
         VkInstance instance;
 
@@ -56,6 +65,8 @@ class VulkanInterface {
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
+
+        bool framebufferResized_FLAG = false;
 
         size_t maxConcurrentFrames;
 
