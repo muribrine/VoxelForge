@@ -1,1 +1,1 @@
-./shaders/compileShaders.sh && make all && ./bin/game
+./shaders/compileShaders.sh && make cleanAndMake && ./bin/game

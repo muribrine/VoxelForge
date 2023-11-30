@@ -27,6 +27,7 @@
         vulkanInterface.createFramebuffers();
 
         vulkanInterface.createCommandPool();
+        vulkanInterface.createVertexBuffer();
         vulkanInterface.createCommandBuffers();
 
         vulkanInterface.createSyncObjects();
