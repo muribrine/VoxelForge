@@ -1,5 +1,6 @@
 #include "vulkanRequires.hpp"
 
+#include "./buffers/buffers.hpp"
 #include "./physicalDevices/physicalDevices.hpp"
 #include "./queues/queues.hpp"
 #include "./swapChains/swapChains.hpp"
@@ -60,7 +61,6 @@ class VulkanInterface {
         void createLogicalDevice();
 
         void createSwapChain();
-        void cleanUpSwapChain();
         void recreateSwapChain();
         void createImageViews();
 

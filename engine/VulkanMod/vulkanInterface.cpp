@@ -141,20 +141,6 @@ void VulkanInterface::createSwapChain() {
 
 };
 
-void VulkanInterface::cleanUpSwapChain() {
-
-    for (auto framebuffer : swapChainFramebuffers) {
-        vkDestroyFramebuffer(device, framebuffer, nullptr);
-    };
-
-    for (auto imageView : swapChainImageViews) {
-        vkDestroyImageView(device, imageView, nullptr);
-    };
-
-    vkDestroySwapchainKHR(device, swapChain, nullptr);
-
-};
-
 void VulkanInterface::recreateSwapChain() {
 
     int width = 0, height = 0;
@@ -170,7 +156,7 @@ void VulkanInterface::recreateSwapChain() {
 
     vkDeviceWaitIdle(device);
 
-    cleanUpSwapChain();
+    cleanUpSwapChain(device, swapChainFramebuffers, swapChainImageViews, swapChain);
 
     createSwapChain();
     createImageViews();
@@ -196,6 +182,7 @@ void VulkanInterface::createImageViews() {
     };
 
 };
+
 
 void VulkanInterface::createRenderPass() {
 
@@ -280,7 +267,6 @@ void VulkanInterface::createGraphicsPipeline() {
     //VkPipelineRasterizationStateCreateInfo *rasterizer = makeRasterizerCreateInfo();
     //VkPipelineMultisampleStateCreateInfo *multisampling = makeMultisamplingCreateInfo();
     //VkPipelineDynamicStateCreateInfo *dynamicState = makeDynamicStateCreateInfo();
-
 
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
@@ -430,55 +416,13 @@ void VulkanInterface::createCommandPool() {
 
 void VulkanInterface::createVertexBuffer() {
 
-    VkBufferCreateInfo bufferInfo{};
-    VkMemoryAllocateInfo allocInfo{};
-    VkMemoryRequirements memRequirements;
-
-    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufferInfo.size = sizeof(vertices[0]) * vertices.size();
-    bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-    if (vkCreateBuffer(device, &bufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS) {
-
-        throw std::runtime_error("Failed to create vertex buffer!");
-
-    };
-
-    
-    vkGetBufferMemoryRequirements(device, vertexBuffer, &memRequirements);
-
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-    if (vkAllocateMemory(device, &allocInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS) {
-
-        throw std::runtime_error("Failed to allocate vertex buffer memory!");
-
-    };
-
-    vkBindBufferMemory(device, vertexBuffer, vertexBufferMemory, 0);
+    VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+    VkBufferCreateInfo bufferInfo = createBuffer(physicalDevice, device, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBuffer, vertexBufferMemory);
 
     void* data;
     vkMapMemory(device, vertexBufferMemory, 0, bufferInfo.size, 0, &data);
     memcpy(data, vertices.data(), (size_t) bufferInfo.size);
     vkUnmapMemory(device, vertexBufferMemory);
-
-};
-
-uint32_t VulkanInterface::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
-
-    VkPhysicalDeviceMemoryProperties memProperties;
-    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
-
-    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-        if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-            return i;
-        };
-    };
-
-    throw std::runtime_error("Failed to find suitable memory type!");
 
 };
 
@@ -593,7 +537,7 @@ void VulkanInterface::createSyncObjects() {
 
 void VulkanInterface::cleanUpVkResources() {
 
-    cleanUpSwapChain();
+    cleanUpSwapChain(device, swapChainFramebuffers, swapChainImageViews, swapChain);
 
     vkDestroyBuffer(device, vertexBuffer, nullptr);
     vkFreeMemory(device, vertexBufferMemory, nullptr);

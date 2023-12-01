@@ -13,3 +13,4 @@ VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwi
 VkImageViewCreateInfo makeImageViewCreateInfo(size_t i, VkFormat swapChainImageFormat, std::vector<VkImage> swapChainImages);
 uint32_t selectImageCount(SwapChainSupportDetails swapChainSupport);
 VkSwapchainCreateInfoKHR makeSwapChainCreateInfo(VkSurfaceKHR surface, uint32_t imageCount, VkExtent2D extent, VkSurfaceFormatKHR surfaceFormat, VkPhysicalDevice physicalDevice, SwapChainSupportDetails swapChainSupport, VkPresentModeKHR presentMode);
+void cleanUpSwapChain(VkDevice device, std::vector<VkFramebuffer> swapChainFramebuffers, std::vector<VkImageView> swapChainImageViews, VkSwapchainKHR swapChain);
